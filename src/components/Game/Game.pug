@@ -1,0 +1,11 @@
+div.game
+  div.main
+    button.profit(@click="getClickProfit()")
+      | +{{ clickProfitAmount }}$
+    img.money(src="http://findicons.com/files/icons/1700/2d/512/money.png")
+    span.money
+      | {{ $amount(money) }}
+  button.buyClickUpgrade(@click="buyClickUpgrade()")
+    | Upgrade ${{ clickUpgradePrice }}
+  div.items
+    item(v-for="item in items", :item="item", v-on:buy="buyItem(item)")

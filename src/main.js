@@ -1,7 +1,9 @@
 import Vue from 'vue'
-import App from './App.vue'
+import Game from './components/Game/Game.vue'
+
+Vue.prototype.$amount = (value) => (Math.floor(value))
 
 new Vue({
-  el: '#app',
-  render: h => h(App)
+  el: '#game',
+  render: h => h(Game)
 })
