@@ -1,7 +1,12 @@
 div.item
-  img(:src="item.image", alt="item.name")
+  img(
+    :src="item.image",
+    :alt="item.name"
+  )
   span.quantity
     | {{ item.quantity }}
-  button.buy(@click="$emit('buy')")
+  button.buy(
+    @click="$emit('buy')"
+  )
   span.price
     | {{ $amount(item.price) }}

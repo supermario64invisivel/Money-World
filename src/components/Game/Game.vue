@@ -4,32 +4,62 @@
 <script>
 import Item from '../Item/Item.vue'
 import items from './items'
+import clickUpgrades from './clickUpgrades'
+import filter from 'lodash/filter'
 
 export default {
   name: 'Game',
 
   data: () => ({
     money: 0,
-    clickProfitAmount: 1,
-    clickUpgradePrice: 50,
-    items: items
+    clickMoney: 0,
+    clickProfit: 1,
+    clickProfitPercent: 0,
+    clickUpgrades,
+    items
   }),
 
   components: { Item },
+
+  computed: {
+
+    availableClickUpgrades () {
+      return filter(this.clickUpgrades, upgrade => (
+        upgrade.available &&
+        (this.clickMoney >= upgrade.req)
+      ))
+    },
+
+    profitPerSecond () {
+      var item, amount = 0
+      for (var slug in this.items) {
+        item = this.items[slug]
+        amount += (item.quantity * item.profit)
+      }
+      return amount
+    },
+
+    clickProfitAmount () {
+      return Math.floor(this.clickProfit + (this.clickProfitPercent * this.profitPerSecond))
+    }
+
+  },
 
   methods: {
 
     getClickProfit () {
       this.money += this.clickProfitAmount
+      this.clickMoney += this.clickProfitAmount
     },
 
-    buyClickUpgrade () {
-      if (this.clickUpgradePrice > this.money) {
+    buyClickUpgrade (upgrade) {
+      if (upgrade.price > this.money) {
         return
       }
     
-      this.money -= this.clickUpgradePrice
-      this.clickProfitAmount *= 2
+      this.money -= upgrade.price
+      upgrade.available = false
+      this.applyEffect(upgrade.effect)
     },
 
     buyItem (item) {
@@ -45,10 +75,22 @@ export default {
     },
 
     getProfits () {
-      var item
-      for (var slug in this.items) {
-        item = this.items[slug]
-        this.money += (item.quantity * item.profit) / 10
+      this.money += this.profitPerSecond / 10
+    },
+
+    applyEffect(effect) {
+      var match
+
+      // multiply click profit
+      if (match = effect.match(/^\*([0-9.]+)$/)) {
+        this.clickProfit *= match[1]
+        return
+      }
+
+      // percent of profitPerSecond
+      if (match = effect.match(/^\*([0-9.]+)profit$/)) {
+        this.clickProfitPercent += (match[1] * 1)
+        return
       }
     }
 
