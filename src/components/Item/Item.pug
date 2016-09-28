@@ -10,3 +10,10 @@ div.item
   )
   span.price
     | {{ $amount(item.price) }}
+  div.itemUpgrades
+    img.buyItemUpgrade(
+      v-for="upgrade in availableItemUpgrades",
+      @click="$emit('buyItemUpgrade', item, upgrade)",
+      :title="upgradePrice(item, upgrade)",
+      :src="item.upgradeImage"
+    )

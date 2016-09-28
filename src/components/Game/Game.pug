@@ -12,11 +12,13 @@ div.game
   div.clickUpgrades
     button.buyClickUpgrade(
       v-for="upgrade in availableClickUpgrades",
-      @click="buyClickUpgrade(upgrade)"
+      @click="buyClickUpgrade(upgrade)",
+      :title="'$' + upgrade.price"
     )
   div.items
     item(
       v-for="item in items",
       :item="item",
-      v-on:buy="buyItem(item)"
+      v-on:buy="buyItem(item)",
+      v-on:buyItemUpgrade="buyItemUpgrade"
     )

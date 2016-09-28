@@ -71,19 +71,44 @@ export default {
 
       this.money = this.money - sellPrice
       item.quantity++
-      item.price = item.price * 1.18
+      item.price *= 1.18
+    },
+
+    buyItemUpgrade (item, upgrade) {
+      var price = Math.floor(item.initialPrice * upgrade.price)
+
+      if (price > this.money) {
+        return
+      }
+
+      this.money -= price
+      item.upgrades.push(upgrade.req + (upgrade.au ? 'au' : ''))
+      this.applyEffect(upgrade.effect, item)
     },
 
     getProfits () {
       this.money += this.profitPerSecond / 10
     },
 
-    applyEffect(effect) {
+    applyEffect(effect, item) {
       var match
 
-      // multiply click profit
+      if (effect === 'au') {
+        item.profit *= 7
+        item.quantity -= 300
+        item.price = item.initialPrice * 5
+        for (var i = 0; i < item.quantity; i++) {
+          item.price *= 1.18
+        }
+      }
+
+      // multiply profit
       if (match = effect.match(/^\*([0-9.]+)$/)) {
-        this.clickProfit *= match[1]
+        if (item) {
+          item.profit *= match[1]
+        } else {
+          this.clickProfit *= match[1]
+        }
         return
       }
 
